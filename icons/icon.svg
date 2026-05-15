@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#f5efe4"/>
+  <rect x="40" y="40" width="432" height="432" rx="60" fill="#c8962a"/>
+  <!-- Moon and sun -->
+  <circle cx="160" cy="180" r="60" fill="#f5e8c0"/>
+  <circle cx="190" cy="160" r="45" fill="#c8962a"/>
+  <!-- Stars -->
+  <circle cx="280" cy="120" r="8" fill="#f5e8c0"/>
+  <circle cx="320" cy="150" r="5" fill="#f5e8c0"/>
+  <circle cx="350" cy="110" r="6" fill="#f5e8c0"/>
+  <!-- Book -->
+  <rect x="156" y="240" width="200" height="140" rx="8" fill="#fdfaf4"/>
+  <rect x="156" y="240" width="100" height="140" rx="8" fill="#e8ddd0"/>
+  <line x1="256" y1="245" x2="256" y2="375" stroke="#c8962a" stroke-width="3"/>
+  <!-- Text lines on book -->
+  <rect x="170" y="270" width="70" height="6" rx="3" fill="#c8962a" opacity="0.5"/>
+  <rect x="170" y="285" width="60" height="6" rx="3" fill="#c8962a" opacity="0.5"/>
+  <rect x="170" y="300" width="65" height="6" rx="3" fill="#c8962a" opacity="0.5"/>
+  <rect x="270" y="270" width="70" height="6" rx="3" fill="#c8962a" opacity="0.5"/>
+  <rect x="270" y="285" width="60" height="6" rx="3" fill="#c8962a" opacity="0.5"/>
+  <rect x="270" y="300" width="65" height="6" rx="3" fill="#c8962a" opacity="0.5"/>
+  <!-- Arabic text label -->
+  <text x="256" y="430" font-family="serif" font-size="48" fill="#f5efe4" text-anchor="middle" font-weight="bold">أذكاري</text>
+</svg>

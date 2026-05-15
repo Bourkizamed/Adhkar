@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Full background for maskable (no rounded corners) -->
+  <rect width="512" height="512" fill="#c8962a"/>
+  <!-- Safe zone content (80% center = 205px padding each side roughly) -->
+  <!-- Moon -->
+  <circle cx="170" cy="190" r="55" fill="#f5e8c0"/>
+  <circle cx="198" cy="172" r="42" fill="#c8962a"/>
+  <!-- Stars -->
+  <circle cx="290" cy="130" r="7" fill="#f5e8c0"/>
+  <circle cx="325" cy="158" r="5" fill="#f5e8c0"/>
+  <circle cx="355" cy="120" r="5" fill="#f5e8c0"/>
+  <!-- Book -->
+  <rect x="166" y="248" width="180" height="126" rx="8" fill="#fdfaf4"/>
+  <rect x="166" y="248" width="90" height="126" rx="8" fill="#e8ddd0"/>
+  <line x1="256" y1="252" x2="256" y2="370" stroke="#c8962a" stroke-width="3"/>
+  <rect x="178" y="272" width="60" height="5" rx="2" fill="#c8962a" opacity="0.5"/>
+  <rect x="178" y="285" width="52" height="5" rx="2" fill="#c8962a" opacity="0.5"/>
+  <rect x="178" y="298" width="56" height="5" rx="2" fill="#c8962a" opacity="0.5"/>
+  <rect x="268" y="272" width="60" height="5" rx="2" fill="#c8962a" opacity="0.5"/>
+  <rect x="268" y="285" width="52" height="5" rx="2" fill="#c8962a" opacity="0.5"/>
+  <rect x="268" y="298" width="56" height="5" rx="2" fill="#c8962a" opacity="0.5"/>
+  <!-- Label -->
+  <text x="256" y="420" font-family="serif" font-size="44" fill="#f5efe4" text-anchor="middle" font-weight="bold">أذكاري</text>
+</svg>
