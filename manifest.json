@@ -3,7 +3,7 @@
   "short_name": "أذكاري",
   "description": "تطبيق أذكار الصباح والمساء — تتبع أذكارك اليومية",
   "start_url": "/Adhkar/",
-  "id": "/",
+  "id": "/Adhkar/",
   "display": "standalone",
   "background_color": "#fdfaf4",
   "theme_color": "#c8962a",
