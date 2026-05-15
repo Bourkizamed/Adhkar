@@ -2,7 +2,7 @@
   "name": "أذكاري | الصباح والمساء",
   "short_name": "أذكاري",
   "description": "تطبيق أذكار الصباح والمساء — تتبع أذكارك اليومية",
-  "start_url": "/",
+  "start_url": "/Adhkar/",
   "id": "/",
   "display": "standalone",
   "background_color": "#fdfaf4",
@@ -13,13 +13,13 @@
   "categories": ["lifestyle", "utilities"],
   "icons": [
     {
-      "src": "/icons/icon.svg",
+      "src": "/Adhkar/icons/icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-maskable.svg",
+      "src": "/Adhkar/icons/icon-maskable.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "maskable"
