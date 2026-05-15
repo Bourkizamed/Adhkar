@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>أذكاري | الصباح والمساء</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lateef:wght@400;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.json">
+<style>
+  :root {
+    --sand:        #f5efe4;
+    --sand-deep:   #e8ddd0;
+    --parchment:   #fdfaf4;
+    --ink:         #2b2217;
+    --ink-soft:    #5a4a38;
+    --ink-faint:   #9a8a78;
+    --gold:        #c8962a;
+    --gold-light:  #e8c060;
+    --gold-pale:   #f5e8c0;
+    --green:       #3d6642;
+    --green-light: #5a8a5f;
+    --green-pale:  #d8ead8;
+    --card-bg:     #ffffff;
+    --card-border: #ede3d0;
+    --radius-card: 22px;
+    --radius-pill: 50px;
+    --shadow-card: 0 4px 16px rgba(43,34,23,0.08), 0 1px 3px rgba(43,34,23,0.06);
+    --shadow-float:0 20px 50px rgba(43,34,23,0.18);
+    --anim: 0.22s cubic-bezier(0.34,1.2,0.64,1);
+    --red: #dc2626;
+    --blue: #2563eb;
+    --blue-light: #dbeafe;
+  }
+  [data-dark] {
+    --sand:        #1a1510;
+    --sand-deep:   #252018;
+    --parchment:   #1f1a13;
+    --ink:         #f0e8d8;
+    --ink-soft:    #c8b898;
+    --ink-faint:   #7a6a58;
+    --gold:        #d8a830;
+    --gold-light:  #f0c870;
+    --gold-pale:   #2a2010;
+    --green:       #5a9060;
+    --green-light: #78b080;
+    --green-pale:  #182018;
+    --card-bg:     #252018;
+    --card-border: #3a3025;
+    --shadow-card: 0 4px 16px rgba(0,0,0,0.28);
+    --shadow-float:0 20px 50px rgba(0,0,0,0.5);
+    --blue-light: #1e2a4a;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: var(--sand);
+    display: flex;
+    justify-content: center;
+    color: var(--ink);
+    transition: background .3s, color .3s;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content:'';
+    position:fixed; inset:0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events:none; z-index:0;
+  }
+
+  .shell {
+    width:100%; max-width:600px;
+    display:flex; flex-direction:column;
+    position:relative; z-index:1;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 18px 14px 12px;
+    display:flex; flex-direction:column; gap:12px;
+    position:sticky; top:0; z-index:50;
+    background: var(--sand);
+    transition: background .3s;
+  }
+  .header::after {
+    content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+    background: linear-gradient(90deg, transparent, var(--gold) 40%, var(--gold) 60%, transparent);
+    opacity:.3;
+  }
+
+  .header-top {
+    display:flex; align-items:center; justify-content:space-between;
+  }
+
+  .app-title {
+    font-family:'Lateef',serif; font-size:2.1rem; font-weight:700;
+    color:var(--gold); line-height:1;
+  }
+
+  .header-actions { display:flex; gap:6px; align-items:center; }
+
+  .icon-btn {
+    width:38px; height:38px; border-radius:50%;
+    border:1.5px solid var(--card-border);
+    background:var(--card-bg); color:var(--ink-soft);
+    font-size:1.1rem; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:all .18s;
+    box-shadow:var(--shadow-card);
+    position:relative;
+  }
+  .icon-btn:active { transform:scale(.88); }
+  .icon-btn.active { background:var(--gold-pale); border-color:var(--gold); color:var(--gold); }
+  .icon-btn.muted::after {
+    content:'';
+    position:absolute; top:50%; left:50%;
+    width:2px; height:26px;
+    background:var(--gold);
+    border-radius:2px;
+    transform:translate(-50%,-50%) rotate(45deg);
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display:grid; grid-template-columns:1fr 1fr; gap:5px;
+    background:var(--sand-deep); border-radius:var(--radius-pill); padding:4px;
+  }
+  .tab {
+    padding:9px; border-radius:40px; border:none;
+    background:transparent; font-family:'Tajawal',sans-serif;
+    font-size:.95rem; font-weight:600; color:var(--ink-faint);
+    cursor:pointer; transition:all .2s;
+    display:flex; align-items:center; justify-content:center; gap:5px;
+  }
+  .tab.active { background:var(--card-bg); color:var(--gold); box-shadow:var(--shadow-card); }
+
+  /* ── NAV TABS ── */
+  .nav-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 8px 14px;
+    background: var(--sand);
+    position: sticky;
+    top: 120px;
+    z-index: 49;
+  }
+  .nav-tab {
+    padding: 8px;
+    border-radius: var(--radius-pill);
+    border: 1.5px solid var(--card-border);
+    background: var(--card-bg);
+    font-family: 'Tajawal', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .nav-tab.active {
+    background: var(--gold);
+    color: white;
+    border-color: var(--gold);
+  }
+
+  /* ─── PROGRESS BAR ── */
+  .overall-bar-wrap { padding:8px 14px 4px; }
+  .overall-bar-row {
+    display:flex; align-items:center; justify-content:space-between;
+    font-size:.8rem; color:var(--ink-faint); margin-bottom:5px;
+  }
+  .overall-bar-row .pct-label { font-weight:700; color:var(--green); font-size:.85rem; }
+  .overall-bar-row .count-label { font-size:.75rem; }
+  .overall-bar-bg {
+    height:6px; background:var(--sand-deep); border-radius:10px; overflow:hidden;
+  }
+  .overall-bar-fill {
+    height:100%;
+    background:linear-gradient(90deg, var(--green), var(--gold-light));
+    border-radius:10px; transition:width .4s ease;
+  }
+
+  /* ─── STREAK ── */
+  .streak-wrap {
+    display:none; align-items:center; gap:5px;
+    padding:2px 14px 0; font-size:.78rem; color:var(--ink-faint);
+    justify-content:flex-end;
+  }
+  .streak-count { font-weight:700; color:var(--gold); }
+
+  /* ─── SECTION DIVIDER ── */
+  .section-divider {
+    display:flex; align-items:center; gap:8px;
+    padding:6px 4px 2px; font-size:.72rem; font-weight:700;
+    color:var(--ink-faint); letter-spacing:.04em; text-transform:uppercase;
+  }
+  .section-divider::before, .section-divider::after {
+    content:''; flex:1; height:1px; background:var(--card-border);
+  }
+
+  /* ─── LIST ── */
+  .list-wrap { padding:10px 14px 120px; display:flex; flex-direction:column; gap:10px; }
+
+  /* ─── DHIKR CARD ── */
+  .dhikr-card {
+    background:var(--card-bg); border:1.5px solid var(--card-border);
+    border-radius:var(--radius-card); padding:16px 16px 12px;
+    cursor:pointer; user-select:none; -webkit-user-select:none;
+    box-shadow:var(--shadow-card); position:relative; overflow:hidden;
+    transition:transform .12s, box-shadow .12s, background .2s, border-color .2s, opacity .2s;
+    touch-action: pan-y;
+  }
+  .dhikr-card:active:not(.done) {
+    transform:scale(.973); box-shadow:0 2px 8px rgba(43,34,23,.07);
+  }
+  .dhikr-card.done {
+    background:var(--green-pale); border-color:var(--green-light); cursor:default; opacity:.85;
+  }
+  .dhikr-card.done .arabic { color:var(--green); opacity:.65; }
+  
+  .dhikr-card.swiping {
+    transition: transform 0.1s ease;
+  }
+  
+  .dhikr-card.swipe-action {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 8px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: white;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  
+  .swipe-action-left {
+    right: 10px;
+    background: var(--red);
+  }
+  
+  .swipe-action-right {
+    left: 10px;
+    background: var(--green);
+  }
+
+  @keyframes slideDown {
+    from { opacity:0; transform:translateY(-12px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .dhikr-card.promoted { animation: slideDown .35s ease both; }
+
+  /* ripple */
+  .ripple {
+    position:absolute; border-radius:50%;
+    width:60px; height:60px; background:var(--gold-light);
+    opacity:0; transform:scale(0);
+    animation:rippleAnim .5s ease-out forwards;
+    pointer-events:none; margin:-30px 0 0 -30px;
+  }
+  @keyframes rippleAnim {
+    0%  { transform:scale(0); opacity:.32; }
+    100%{ transform:scale(6); opacity:0; }
+  }
+
+  /* count bubble */
+  .count-bubble {
+    position:absolute; top:13px; left:14px;
+    background:var(--gold-pale); color:var(--gold);
+    border:1.5px solid rgba(200,150,42,.22);
+    border-radius:11px; padding:2px 9px;
+    font-size:1rem; font-weight:800;
+    font-family:'Tajawal',sans-serif;
+    pointer-events:none; transition:background .25s, color .25s;
+    letter-spacing:-.02em; line-height:1.5;
+  }
+  .dhikr-card.done .count-bubble {
+    background:var(--green-pale); color:var(--green);
+    border-color:rgba(90,138,95,.28);
+  }
+
+  .arabic {
+    font-family:'Lateef',serif; font-size:1.75rem; line-height:2rem;
+    color:var(--ink); direction:rtl; text-align:right;
+    margin-bottom:12px; padding-left:58px;
+    transition:color .25s, opacity .25s; pointer-events:none;
+  }
+
+  .card-footer {
+    display:flex; align-items:center; gap:9px; pointer-events:none;
+  }
+  .badge {
+    font-size:.75rem; font-weight:700;
+    background:var(--gold-pale); color:var(--gold);
+    border-radius:20px; padding:3px 9px; white-space:nowrap;
+    border:1px solid rgba(200,150,42,.2);
+    transition:background .25s, color .25s;
+  }
+  .dhikr-card.done .badge {
+    background:var(--green-pale); color:var(--green);
+    border-color:rgba(90,138,95,.3);
+  }
+  .progress-bar-bg {
+    flex:1; height:5px; background:var(--sand-deep);
+    border-radius:10px; overflow:hidden;
+  }
+  .progress-bar-fill {
+    height:100%;
+    background:linear-gradient(90deg, var(--green-light), var(--green));
+    border-radius:10px; transition:width .22s ease;
+  }
+  .dhikr-card.done .progress-bar-fill { background:var(--green); }
+
+  .reset-btn {
+    pointer-events:all; background:none; border:none;
+    font-size:1rem; color:var(--ink-faint); cursor:pointer;
+    padding:4px; border-radius:50%; transition:all .15s;
+    line-height:1; opacity:.45;
+  }
+  .reset-btn:active { opacity:1; transform:rotate(-40deg); }
+
+  .card-edit-overlay {
+    display:none; position:absolute; inset:0;
+    background:rgba(200,150,42,.1); border-radius:var(--radius-card);
+    align-items:center; justify-content:center;
+    font-size:1.5rem; backdrop-filter:blur(2px); cursor:pointer;
+  }
+  .edit-mode .dhikr-card .card-edit-overlay { display:flex; }
+
+  @keyframes highlightPulse {
+    0%   { box-shadow:var(--shadow-card); }
+    40%  { box-shadow:0 0 0 4px var(--gold-light), var(--shadow-card); }
+    100% { box-shadow:var(--shadow-card); }
+  }
+  .dhikr-card.just-activated { animation:highlightPulse .7s ease forwards; }
+
+  .empty-state {
+    text-align:center; padding:60px 20px;
+    color:var(--ink-faint); font-size:1rem; animation:fadeIn .4s ease;
+  }
+  .empty-state .empty-icon { font-size:3rem; margin-bottom:12px; }
+
+  .done-banner {
+    background:linear-gradient(135deg, var(--green), var(--green-light));
+    color:white; text-align:center; padding:13px 16px;
+    border-radius:16px; font-size:1rem; font-weight:700;
+    margin:4px 14px 0;
+    animation:bounceIn .45s var(--anim);
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    box-shadow:0 6px 18px rgba(61,102,66,.28);
+  }
+  @keyframes bounceIn {
+    from { opacity:0; transform:translateY(-8px) scale(.95); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  /* ─── STATS PAGE ── */
+  .stats-container {
+    padding: 20px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .stat-card {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: var(--radius-card);
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+  }
+  
+  .stat-card h3 {
+    font-family: 'Lateef', serif;
+    font-size: 1.4rem;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .stat-item {
+    text-align: center;
+    padding: 12px;
+    background: var(--sand);
+    border-radius: 12px;
+  }
+  
+  .stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+  
+  .chart-bar {
+    height: 8px;
+    background: var(--sand-deep);
+    border-radius: 4px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  
+  .chart-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--green-light));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+
+  /* FAB */
+  .fab {
+    position:fixed;
+    bottom:calc(26px + env(safe-area-inset-bottom));
+    left:50%; transform:translateX(-50%);
+    background:var(--gold); color:white; border:none;
+    border-radius:18px; padding:13px 26px;
+    font-family:'Tajawal',sans-serif; font-size:.93rem; font-weight:700;
+    cursor:pointer; box-shadow:0 8px 22px rgba(200,150,42,.38);
+    display:flex; align-items:center; gap:7px;
+    transition:all .2s; z-index:40;
+  }
+  .fab:active { transform:translateX(-50%) scale(.95); }
+
+  /* ─── MODAL ── */
+  .modal-mask {
+    position:fixed; inset:0;
+    background:rgba(20,15,10,.6);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    display:flex; align-items:flex-end; justify-content:center;
+    z-index:200; opacity:0; pointer-events:none; transition:opacity .25s;
+  }
+  .modal-mask.open { opacity:1; pointer-events:all; }
+  .modal {
+    background:var(--parchment); border-radius:26px 26px 0 0;
+    padding:22px 18px calc(26px + env(safe-area-inset-bottom));
+    width:100%; max-width:600px;
+    display:flex; flex-direction:column; gap:13px;
+    transform:translateY(40px);
+    transition:transform .3s cubic-bezier(.34,1.1,.64,1);
+    box-shadow:var(--shadow-float);
+  }
+  .modal-mask.open .modal { transform:translateY(0); }
+  .modal-handle {
+    width:38px; height:4px; background:var(--card-border);
+    border-radius:4px; margin:0 auto 6px;
+  }
+  .modal-title {
+    font-family:'Lateef',serif; font-size:1.55rem;
+    color:var(--gold); text-align:center;
+  }
+  .modal label {
+    font-size:.83rem; font-weight:700; color:var(--ink-soft);
+    display:block; margin-bottom:4px;
+  }
+  .modal textarea, .modal input[type="number"], .modal input[type="time"] {
+    width:100%; padding:11px 13px; border-radius:14px;
+    border:1.5px solid var(--card-border); background:var(--card-bg);
+    font-family:'Lateef',serif; font-size:1.35rem; color:var(--ink);
+    direction:rtl; resize:none; outline:none; transition:border-color .2s;
+  }
+  .modal input[type="number"], .modal input[type="time"] {
+    font-family:'Tajawal',sans-serif; font-size:1rem;
+    width:110px; direction:ltr; text-align:center;
+  }
+  .modal textarea:focus, .modal input:focus { border-color:var(--gold); }
+  .modal-actions { display:flex; gap:9px; justify-content:flex-end; flex-wrap:wrap; }
+  .btn {
+    padding:10px 20px; border-radius:var(--radius-pill);
+    border:1.5px solid var(--card-border); background:var(--card-bg);
+    font-family:'Tajawal',sans-serif; font-size:.93rem; font-weight:700;
+    color:var(--ink-soft); cursor:pointer; transition:all .15s;
+  }
+  .btn:active { transform:scale(.96); }
+  .btn.primary { background:var(--gold); color:white; border-color:var(--gold); }
+  .btn.danger  { background:#dc2626; color:white; border-color:#dc2626; }
+  .btn.info { background: var(--blue); color: white; border-color: var(--blue); }
+  .modal-delete-wrap { display:flex; justify-content:center; }
+  
+  .settings-group {
+    background: var(--card-bg);
+    border: 1.5px solid var(--card-border);
+    border-radius: var(--radius-card);
+    padding: 16px;
+  }
+  
+  .settings-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+  
+  .settings-row:last-child {
+    border-bottom: none;
+  }
+  
+  .toggle {
+    width: 44px;
+    height: 24px;
+    background: var(--sand-deep);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .toggle.active {
+    background: var(--green);
+  }
+  
+  .toggle::after {
+    content: '';
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.2s;
+  }
+  
+  .toggle.active::after {
+    transform: translateX(20px);
+  }
+
+  @keyframes fadeIn {
+    from { opacity:0; transform:translateY(7px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  .dhikr-card { animation:fadeIn .28s ease both; }
+  .dhikr-card:nth-child(1)  { animation-delay:.02s }
+  .dhikr-card:nth-child(2)  { animation-delay:.04s }
+  .dhikr-card:nth-child(3)  { animation-delay:.06s }
+  .dhikr-card:nth-child(4)  { animation-delay:.08s }
+  .dhikr-card:nth-child(5)  { animation-delay:.10s }
+  .dhikr-card:nth-child(n+6){ animation-delay:.12s }
+
+  .hint {
+    text-align:center; font-size:.73rem; color:var(--ink-faint);
+    padding:0 14px 6px; letter-spacing:.01em;
+  }
+  
+  .sync-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-left: 6px;
+  }
+  
+  .sync-indicator.syncing {
+    background: var(--gold);
+    animation: pulse 1s infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+<div class="shell" id="shell">
+
+  <div class="header">
+    <div class="header-top">
+      <div class="app-title">أذكاري <span class="sync-indicator" id="syncIndicator" title="المزامنة"></span></div>
+      <div class="header-actions">
+        <button class="icon-btn" id="btnSound" title="الصوت">🔊</button>
+        <button class="icon-btn" id="btnVibrate" title="الاهتزاز">📳</button>
+        <button class="icon-btn" id="btnReset"   title="تصفير الكل">🔄</button>
+        <button class="icon-btn" id="btnEdit"    title="وضع التعديل">✏️</button>
+        <button class="icon-btn" id="btnDark"    title="الوضع الليلي">🌙</button>
+      </div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab active" id="tabMorning" role="tab">☀️ الصباح</button>
+      <button class="tab"        id="tabEvening" role="tab">🌙 المساء</button>
+    </div>
+  </div>
+
+  <div class="nav-tabs" id="navTabs">
+    <button class="nav-tab active" data-view="adhkar">📿 الأذكار</button>
+    <button class="nav-tab" data-view="stats">📊 الإحصائيات</button>
+    <button class="nav-tab" data-view="settings">⚙️ الإعدادات</button>
+  </div>
+
+  <div class="overall-bar-wrap" id="progressSection">
+    <div class="overall-bar-row">
+      <span>التقدم</span>
+      <span class="count-label" id="overallCountLabel"></span>
+      <span class="pct-label" id="overallPct">0%</span>
+    </div>
+    <div class="overall-bar-bg">
+      <div class="overall-bar-fill" id="overallFill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="streak-wrap" id="streakWrap">
+    <span>🔥</span><span>سلسلة:</span>
+    <span class="streak-count" id="streakCount">0</span><span>يوم</span>
+  </div>
+
+  <div id="doneBanner"></div>
+
+  <div class="list-wrap" id="listWrap"></div>
+  
+  <div class="stats-container" id="statsContainer" style="display: none;"></div>
+  
+  <div class="settings-container" id="settingsContainer" style="display: none; padding: 20px 14px 120px;"></div>
+
+  <p class="hint" id="hintText">اضغط على الذكر للتكرار • يُحفظ تلقائياً</p>
+  <button class="fab" id="btnAdd">➕ إضافة ذكر</button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-mask" id="modal" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modalTitle">إضافة ذكر</div>
+    <div>
+      <label>النص العربي</label>
+      <textarea id="arabicInput" rows="3" placeholder="أدخل نص الذكر..."></textarea>
+    </div>
+    <div>
+      <label>عدد التكرارات</label>
+      <input type="number" id="repeatInput" min="1" value="1">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="btnCancel">إلغاء</button>
+      <button class="btn primary" id="btnSave">حفظ</button>
+    </div>
+    <div class="modal-delete-wrap" id="deleteWrap" style="display:none">
+      <button class="btn danger" id="btnDelete">🗑️ حذف هذا الذكر</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+
+  // ─── DATA ───
+  const DEFAULT = {
+    morning: [
+      { id:'m1',  arabic:'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَّهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَن ذَا الَّذِي يَشْفَعُ عِندَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِّنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ (آية الكرسي)', repeat:1 },
+      { id:'m2',  arabic:'أَصْبَحْنَا عَلَى فِطْرَةِ الْإِسْلَامِ وَكَلِمَةِ الْإِخْلَاصِ، وَدِينِ نَبِيِّنَا مُحَمَّدٍ ﷺ، وَمِلَّةِ أَبِينَا إِبْرَاهِيمَ، حَنِيفًا مُسْلِمًا، وَمَا كَانَ مِنَ الْمُشْرِكِينَ', repeat:1 },
+      { id:'m3',  arabic:'رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا', repeat:1 },
+      { id:'m4',  arabic:'اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا', repeat:1 },
+      { id:'m5',  arabic:'اللَّهُمَّ بِكَ أَصْبَحْنَا، وَبِكَ أَمْسَيْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ النُّشُورُ', repeat:1 },
+      { id:'m6',  arabic:'لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ، لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ، وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', repeat:1 },
+      { id:'m7',  arabic:'يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ، أَصْلِحْ لِي شَأْنِي كُلَّهُ، وَلَا تَكِلْنِي إِلَى نَفْسِي طَرْفَةَ عَيْنٍ أَبَدًا', repeat:1 },
+      { id:'m8',  arabic:'اللَّهُمَّ أَنْتَ رَبِّي، لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي، فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ', repeat:1 },
+      { id:'m9',  arabic:'اللَّهُمَّ فَاطِرَ السَّمَوَاتِ وَالْأَرْضِ، عَالِمَ الْغَيْبِ وَالشَّهَادَةِ، رَبَّ كُلِّ شَيْءٍ وَمَلِيكَهُ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا أَنْتَ، أَعُوذُ بِكَ مِنْ شَرِّ نَفْسِي، وَمِنْ شَرِّ الشَّيْطَانِ وَشِرْكِهِ', repeat:1 },
+      { id:'m10', arabic:'أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، رَبِّ أَسْأَلُكَ خَيْرَ مَا فِي هَذَا الْيَوْمِ وَخَيْرَ مَا بَعْدَهُ', repeat:1 },
+      { id:'m11', arabic:'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ، اللَّهُمَّ اسْتُرْ عَوْرَاتِي، وَآمِنْ رَوْعَاتِي', repeat:1 },
+      { id:'m12', arabic:'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ، وَهُوَ السَّمِيعُ الْعَلِيمُ', repeat:3 },
+      { id:'m13', arabic:'سُبْحَانَ اللَّهِ عَدَدَ خَلْقِهِ، سُبْحَانَ اللَّهِ رِضَا نَفْسِهِ، سُبْحَانَ اللَّهِ زِنَةَ عَرْشِهِ، سُبْحَانَ اللَّهِ مِدَادَ كَلِمَاتِهِ', repeat:3 },
+      { id:'m14', arabic:'اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَٰهَ إِلَّا أَنْتَ', repeat:3 },
+      { id:'m15', arabic:'قُلْ هُوَ اللَّهُ أَحَدٌ (الإخلاص) + قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ (الفلق) + قُلْ أَعُوذُ بِرَبِّ النَّاسِ (الناس)', repeat:3 },
+      { id:'m16', arabic:'حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ', repeat:7 },
+      { id:'m17', arabic:'اللَّهُمَّ إِنِّي أَصْبَحْتُ أُشْهِدُكَ وَأُشْهِدُ حَمَلَةَ عَرْشِكَ وَمَلَائِكَتَكَ وَجَمِيعَ خَلْقِكَ أَنَّكَ أَنْتَ اللَّهُ وَحْدَكَ لَا شَرِيكَ لَكَ، وَأَنَّ مُحَمَّدًا عَبْدُكَ وَرَسُولُكَ', repeat:4 },
+      { id:'m18', arabic:'لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', repeat:10 },
+      { id:'m19', arabic:'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', repeat:100 },
+      { id:'m20', arabic:'أَسْتَغْفِرُ اللَّهَ', repeat:100 },
+      { id:'m21', arabic:'سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَاللَّهُ أَكْبَرُ', repeat:100 },
+    ],
+    evening: [
+      { id:'e1',  arabic:'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ (آية الكرسي)', repeat:1 },
+      { id:'e2',  arabic:'أَمْسَيْنَا عَلَى فِطْرَةِ الْإِسْلَامِ وَكَلِمَةِ الْإِخْلَاصِ، وَدِينِ نَبِيِّنَا مُحَمَّدٍ ﷺ، وَمِلَّةِ أَبِينَا إِبْرَاهِيمَ حَنِيفًا مُسْلِمًا', repeat:1 },
+      { id:'e3',  arabic:'رَضِيتُ بِاللَّهِ رَبًّا، وَبِالْإِسْلَامِ دِينًا، وَبِمُحَمَّدٍ ﷺ نَبِيًّا', repeat:1 },
+      { id:'e4',  arabic:'اللَّهُمَّ بِكَ أَمْسَيْنَا، وَبِكَ أَصْبَحْنَا، وَبِكَ نَحْيَا، وَبِكَ نَمُوتُ، وَإِلَيْكَ الْمَصِيرُ', repeat:1 },
+      { id:'e5',  arabic:'لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ، لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ، وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', repeat:1 },
+      { id:'e6',  arabic:'يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ، أَصْلِحْ لِي شَأْنِي كُلَّهُ', repeat:1 },
+      { id:'e7',  arabic:'اللَّهُمَّ أَنْتَ رَبِّي، لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي', repeat:1 },
+      { id:'e8',  arabic:'اللَّهُمَّ فَاطِرَ السَّمَوَاتِ وَالْأَرْضِ، عَالِمَ الْغَيْبِ وَالشَّهَادَةِ، أَشْهَدُ أَنْ لَا إِلَٰهَ إِلَّا أَنْتَ', repeat:1 },
+      { id:'e9',  arabic:'أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، اللَّهُمَّ أَسْأَلُكَ خَيْرَ هَذِهِ اللَّيْلَةِ وَخَيْرَ مَا بَعْدَهَا', repeat:1 },
+      { id:'e10', arabic:'اللَّهُمَّ إِنِّي أَسْأَلُكَ الْعَفْوَ وَالْعَافِيَةَ فِي الدُّنْيَا وَالْآخِرَةِ', repeat:1 },
+      { id:'e11', arabic:'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ، وَهُوَ السَّمِيعُ الْعَلِيمُ', repeat:3 },
+      { id:'e12', arabic:'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ', repeat:3 },
+      { id:'e13', arabic:'اللَّهُمَّ عَافِنِي فِي بَدَنِي، اللَّهُمَّ عَافِنِي فِي سَمْعِي، اللَّهُمَّ عَافِنِي فِي بَصَرِي، لَا إِلَٰهَ إِلَّا أَنْتَ', repeat:3 },
+      { id:'e14', arabic:'قُلْ هُوَ اللَّهُ أَحَدٌ (الإخلاص) + قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ (الفلق) + قُلْ أَعُوذُ بِرَبِّ النَّاسِ (الناس)', repeat:3 },
+      { id:'e15', arabic:'حَسْبِيَ اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ عَلَيْهِ تَوَكَّلْتُ وَهُوَ رَبُّ الْعَرْشِ الْعَظِيمِ', repeat:7 },
+      { id:'e16', arabic:'اللَّهُمَّ إِنِّي أَمْسَيْتُ أُشْهِدُكَ وَأُشْهِدُ حَمَلَةَ عَرْشِكَ أَنَّكَ أَنْتَ اللَّهُ وَحْدَكَ لَا شَرِيكَ لَكَ، وَأَنَّ مُحَمَّدًا عَبْدُكَ وَرَسُولُكَ', repeat:4 },
+      { id:'e17', arabic:'لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ', repeat:10 },
+      { id:'e18', arabic:'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', repeat:100 },
+      { id:'e19', arabic:'أَسْتَغْفِرُ اللَّهَ', repeat:100 },
+      { id:'e20', arabic:'سُبْحَانَ اللَّهِ، وَالْحَمْدُ لِلَّهِ، وَاللَّهُ أَكْبَرُ', repeat:100 },
+    ]
+  };
+
+  // ─── STATE ───
+  const K = {
+    m:'adhkar_v5_morning', e:'adhkar_v5_evening',
+    p:'adhkar_v5_progress', dark:'adhkar_dark',
+    vib:'adhkar_vibrate', streak:'adhkar_streak',
+    sound:'adhkar_sound', history:'adhkar_history',
+    settings:'adhkar_settings'
+  };
+
+  let tab       = 'morning';
+  let editMode  = false;
+  let editId    = null;
+  let currentView = 'adhkar';
+  let data      = { morning:[], evening:[] };
+  let prog      = { morning:{}, evening:{} };
+  let darkMode  = false;
+  let vibrateOn = true;
+  let soundOn   = true;
+  let streak    = { count:0, lastDate:null };
+  let history   = {};
+  let settings  = {
+    autoReset: true,
+    morningTime: '05:30',
+    eveningTime: '17:30',
+    cloudSync: false
+  };
+
+  // Audio context for sound effects
+  let audioCtx = null;
+  
+  function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+  }
+  
+  function playClickSound() {
+    if (!soundOn || !audioCtx) return;
+    
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+    
+    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    
+    oscillator.start(audioCtx.currentTime);
+    oscillator.stop(audioCtx.currentTime + 0.1);
+  }
+  
+  function playCompleteSound() {
+    if (!soundOn || !audioCtx) return;
+    
+    const notes = [523, 659, 784]; // C5, E5, G5
+    notes.forEach((freq, i) => {
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      
+      oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.1);
+      
+      gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime + i * 0.1);
+      gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.1 + 0.3);
+      
+      oscillator.start(audioCtx.currentTime + i * 0.1);
+      oscillator.stop(audioCtx.currentTime + i * 0.1 + 0.3);
+    });
+  }
+
+  // ─── STORAGE ───
+  function load() {
+    try {
+      const dm = localStorage.getItem(K.m);
+      const de = localStorage.getItem(K.e);
+      const dp = localStorage.getItem(K.p);
+      data.morning = dm ? JSON.parse(dm) : JSON.parse(JSON.stringify(DEFAULT.morning));
+      data.evening = de ? JSON.parse(de) : JSON.parse(JSON.stringify(DEFAULT.evening));
+      prog         = dp ? JSON.parse(dp) : { morning:{}, evening:{} };
+      if (!prog.morning) prog.morning = {};
+      if (!prog.evening) prog.evening = {};
+      darkMode  = localStorage.getItem(K.dark)   === '1';
+      vibrateOn = localStorage.getItem(K.vib)    !== '0';
+      soundOn   = localStorage.getItem(K.sound)  !== '0';
+      const ds  = localStorage.getItem(K.streak);
+      if (ds) streak = JSON.parse(ds);
+      const dh = localStorage.getItem(K.history);
+      if (dh) history = JSON.parse(dh);
+      const ds2 = localStorage.getItem(K.settings);
+      if (ds2) settings = {...settings, ...JSON.parse(ds2)};
+    } catch {
+      data = JSON.parse(JSON.stringify(DEFAULT));
+      prog = { morning:{}, evening:{} };
+    }
+  }
+
+  function save() {
+    try {
+      localStorage.setItem(K.m,      JSON.stringify(data.morning));
+      localStorage.setItem(K.e,      JSON.stringify(data.evening));
+      localStorage.setItem(K.p,      JSON.stringify(prog));
+      localStorage.setItem(K.dark,   darkMode  ? '1' : '0');
+      localStorage.setItem(K.vib,    vibrateOn ? '1' : '0');
+      localStorage.setItem(K.sound,  soundOn   ? '1' : '0');
+      localStorage.setItem(K.settings, JSON.stringify(settings));
+    } catch {}
+  }
+  
+  function saveHistory() {
+    try {
+      localStorage.setItem(K.history, JSON.stringify(history));
+    } catch {}
+  }
+  
+  function recordCompletion() {
+    const today = new Date().toISOString().slice(0, 10);
+    if (!history[today]) {
+      history[today] = { morning: 0, evening: 0 };
+    }
+    history[today][tab] = (history[today][tab] || 0) + 1;
+    
+    // Keep only last 30 days
+    const keys = Object.keys(history).sort();
+    if (keys.length > 30) {
+      delete history[keys[0]];
+    }
+    saveHistory();
+  }
+  
+  function simulateCloudSync() {
+    if (!settings.cloudSync) return;
+    
+    const indicator = document.getElementById('syncIndicator');
+    if (indicator) {
+      indicator.classList.add('syncing');
+      setTimeout(() => {
+        indicator.classList.remove('syncing');
+        // Simulate successful sync
+        const syncToast = document.createElement('div');
+        syncToast.style.cssText = `
+          position: fixed;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: var(--green);
+          color: white;
+          padding: 8px 20px;
+          border-radius: 20px;
+          font-size: 0.85rem;
+          z-index: 300;
+          animation: fadeIn 0.3s ease;
+        `;
+        syncToast.textContent = '✓ تمت المزامنة بنجاح';
+        document.body.appendChild(syncToast);
+        setTimeout(() => syncToast.remove(), 2000);
+      }, 1500);
+    }
+  }
+
+  // ─── SMART AUTO RESET ───
+  function checkAutoReset() {
+    if (!settings.autoReset) return;
+    
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentMinute = now.getMinutes();
+    const currentTime = currentHour * 60 + currentMinute;
+    
+    const [morningH, morningM] = settings.morningTime.split(':').map(Number);
+    const [eveningH, eveningM] = settings.eveningTime.split(':').map(Number);
+    const morningTime = morningH * 60 + morningM;
+    const eveningTime = eveningH * 60 + eveningM;
+    
+    const today = now.toISOString().slice(0, 10);
+    const lastResetKey = 'adhkar_last_reset_' + today;
+    const lastReset = localStorage.getItem(lastResetKey);
+    
+    // Check if morning reset is needed
+    if (currentTime >= morningTime && currentTime < morningTime + 60 && lastReset !== 'morning') {
+      resetProgress('morning');
+      localStorage.setItem(lastResetKey, 'morning');
+    }
+    
+    // Check if evening reset is needed
+    if (currentTime >= eveningTime && currentTime < eveningTime + 60 && lastReset !== 'evening') {
+      resetProgress('evening');
+      localStorage.setItem(lastResetKey, 'evening');
+    }
+  }
+  
+  function resetProgress(type) {
+    const map = type === 'morning' ? prog.morning : prog.evening;
+    Object.keys(map).forEach(k => map[k] = 0);
+    save();
+    if (tab === type) render();
+  }
+  
+  // Check auto reset every minute
+  setInterval(checkAutoReset, 60000);
+
+  // ─── HELPERS ───
+  const curList  = () => data[tab];
+  const curProg  = () => prog[tab];
+  const esc      = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const getCount = id => curProg()[id] || 0;
+  const isDone   = d  => getCount(d.id) >= d.repeat;
+
+  function calcOverall() {
+    const list = curList();
+    if (!list.length) return { pct:0, done:0, total:0 };
+    let done = 0, total = 0;
+    list.forEach(d => {
+      total += d.repeat;
+      done  += Math.min(getCount(d.id), d.repeat);
+    });
+    return { pct: total ? Math.round(done/total*100) : 0, done, total };
+  }
+
+  function allDone() {
+    return curList().length > 0 && curList().every(d => isDone(d));
+  }
+
+  function sortedList() {
+    const list = curList();
+    const done    = list.filter(d =>  isDone(d));
+    const pending = list.filter(d => !isDone(d));
+    return { done, pending };
+  }
+
+  function vibrate(pattern) {
+    if (vibrateOn && navigator.vibrate) navigator.vibrate(pattern);
+  }
+
+  // ─── DOM REFS ───
+  const listWrap        = document.getElementById('listWrap');
+  const statsContainer  = document.getElementById('statsContainer');
+  const settingsContainer = document.getElementById('settingsContainer');
+  const progressSection = document.getElementById('progressSection');
+  const overallFill     = document.getElementById('overallFill');
+  const overallPct      = document.getElementById('overallPct');
+  const overallCount    = document.getElementById('overallCountLabel');
+  const doneBanner      = document.getElementById('doneBanner');
+  const streakWrap      = document.getElementById('streakWrap');
+  const streakCountEl   = document.getElementById('streakCount');
+  const hintText        = document.getElementById('hintText');
+  const btnAdd          = document.getElementById('btnAdd');
+  const shell           = document.getElementById('shell');
+  const btnEdit         = document.getElementById('btnEdit');
+  const btnVibrate      = document.getElementById('btnVibrate');
+  const btnSound        = document.getElementById('btnSound');
+  const syncIndicator   = document.getElementById('syncIndicator');
+
+  // ─── CARD HTML ───
+  function cardHTML(d, extraClass) {
+    const cnt  = getCount(d.id);
+    const max  = d.repeat;
+    const pct  = max ? Math.min(100, cnt/max*100) : 0;
+    const done = cnt >= max;
+    return `<div class="dhikr-card ${done?'done':''} ${extraClass||''}" data-id="${d.id}">
+      <div class="count-bubble">${cnt}/${max}</div>
+      <div class="arabic">${esc(d.arabic)}</div>
+      <div class="card-footer">
+        <span class="badge">${done ? '✓' : ('🔁 '+max+' مرة')}</span>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" style="width:${pct}%"></div>
+        </div>
+        <button class="reset-btn" data-reset="${d.id}" title="تصفير">↺</button>
+      </div>
+      <div class="card-edit-overlay" data-edit="${d.id}">✏️ تعديل</div>
+    </div>`;
+  }
+
+  // ─── STATS HTML ───
+  function renderStats() {
+    const today = new Date().toISOString().slice(0, 10);
+    const weekDays = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 86400000);
+      weekDays.push(d.toISOString().slice(0, 10));
+    }
+    
+    const totalCompletions = Object.values(history).reduce((sum, day) => sum + (day.morning || 0) + (day.evening || 0), 0);
+    const todayCompletions = history[today] ? (history[today].morning || 0) + (history[today].evening || 0) : 0;
+    const weekCompletions = weekDays.reduce((sum, day) => sum + ((history[day]?.morning || 0) + (history[day]?.evening || 0)), 0);
+    
+    let html = `
+      <div class="stat-card">
+        <h3>📊 ملخص اليوم</h3>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="stat-value">${todayCompletions}</div>
+            <div class="stat-label">تكرارات اليوم</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${weekCompletions}</div>
+            <div class="stat-label">هذا الأسبوع</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${totalCompletions}</div>
+            <div class="stat-label">كل الوقت</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">${streak.count || 0}</div>
+            <div class="stat-label">أيام متتالية</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <h3>📈 الأسبوع الحالي</h3>
+        ${weekDays.map((day, i) => {
+          const dayCompletions = (history[day]?.morning || 0) + (history[day]?.evening || 0);
+          const maxCompletions = Math.max(...weekDays.map(d => (history[d]?.morning || 0) + (history[d]?.evening || 0)), 1);
+          const pct = (dayCompletions / maxCompletions) * 100;
+          const dayNames = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+          const date = new Date(day);
+          const dayName = dayNames[date.getDay()];
+          return `
+            <div style="margin-bottom: 8px;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 4px;">
+                <span>${dayName}</span>
+                <span style="color: var(--ink-faint);">${dayCompletions}</span>
+              </div>
+              <div class="chart-bar">
+                <div class="chart-fill" style="width: ${pct}%"></div>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+      
+      <div class="stat-card">
+        <h3>🏆 الإنجازات</h3>
+        <div style="font-size: 0.9rem; color: var(--ink-soft);">
+          <div style="margin-bottom: 8px;">${streak.count >= 7 ? '🌟' : '⭐'} ${streak.count >= 7 ? 'أسبوع كامل متتالي!' : 'استمر في التقدم'}</div>
+          <div style="margin-bottom: 8px;">${totalCompletions >= 100 ? '💎' : '🔹'} ${totalCompletions >= 100 ? 'أكثر من 100 تكرار!' : totalCompletions + ' تكرار'}</div>
+        </div>
+      </div>
+    `;
+    
+    statsContainer.innerHTML = html;
+  }
+  
+  // ─── SETTINGS HTML ───
+  function renderSettings() {
+    let html = `
+      <div class="settings-group">
+        <h3 style="font-family: 'Lateef', serif; color: var(--gold); margin-bottom: 12px;">⚙️ الإعدادات العامة</h3>
+        
+        <div class="settings-row">
+          <span>إعادة التعيين التلقائي</span>
+          <div class="toggle ${settings.autoReset ? 'active' : ''}" id="toggleAutoReset"></div>
+        </div>
+        
+        <div class="settings-row">
+          <span>وقت أذكار الصباح</span>
+          <input type="time" id="morningTimeInput" value="${settings.morningTime}" 
+                 style="padding: 4px 8px; border-radius: 8px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--ink);">
+        </div>
+        
+        <div class="settings-row">
+          <span>وقت أذكار المساء</span>
+          <input type="time" id="eveningTimeInput" value="${settings.eveningTime}"
+                 style="padding: 4px 8px; border-radius: 8px; border: 1px solid var(--card-border); background: var(--card-bg); color: var(--ink);">
+        </div>
+        
+        <div class="settings-row">
+          <span>المزامنة السحابية <span style="font-size: 0.7rem; color: var(--ink-faint);">(محاكاة)</span></span>
+          <div class="toggle ${settings.cloudSync ? 'active' : ''}" id="toggleCloudSync"></div>
+        </div>
+      </div>
+      
+      <div class="settings-group">
+        <h3 style="font-family: 'Lateef', serif; color: var(--gold); margin-bottom: 12px;">🎵 الصوت والاهتزاز</h3>
+        
+        <div class="settings-row">
+          <span>المؤثرات الصوتية</span>
+          <div class="toggle ${soundOn ? 'active' : ''}" id="toggleSound"></div>
+        </div>
+        
+        <div class="settings-row">
+          <span>الاهتزاز</span>
+          <div class="toggle ${vibrateOn ? 'active' : ''}" id="toggleVibrate"></div>
+        </div>
+      </div>
+    `;
+    
+    settingsContainer.innerHTML = html;
+    
+    // Add event listeners
+    document.getElementById('toggleAutoReset')?.addEventListener('click', function() {
+      settings.autoReset = !settings.autoReset;
+      this.classList.toggle('active');
+      save();
+    });
+    
+    document.getElementById('toggleCloudSync')?.addEventListener('click', function() {
+      settings.cloudSync = !settings.cloudSync;
+      this.classList.toggle('active');
+      save();
+      if (settings.cloudSync) simulateCloudSync();
+    });
+    
+    document.getElementById('toggleSound')?.addEventListener('click', function() {
+      soundOn = !soundOn;
+      this.classList.toggle('active');
+      updateSoundButton();
+      save();
+      if (soundOn) initAudio();
+    });
+    
+    document.getElementById('toggleVibrate')?.addEventListener('click', function() {
+      vibrateOn = !vibrateOn;
+      this.classList.toggle('active');
+      updateVibrateButton();
+      save();
+    });
+    
+    document.getElementById('morningTimeInput')?.addEventListener('change', function() {
+      settings.morningTime = this.value;
+      save();
+    });
+    
+    document.getElementById('eveningTimeInput')?.addEventListener('change', function() {
+      settings.eveningTime = this.value;
+      save();
+    });
+  }
+  
+  function updateSoundButton() {
+    btnSound.textContent = soundOn ? '🔊' : '🔇';
+    btnSound.classList.toggle('muted', !soundOn);
+  }
+  
+  function updateVibrateButton() {
+    btnVibrate.textContent = vibrateOn ? '📳' : '🔕';
+    btnVibrate.classList.toggle('active', !vibrateOn);
+  }
+
+  // ─── RENDER ───
+  function render() {
+    // Show/hide sections based on current view
+    const isAdhkarView = currentView === 'adhkar';
+    listWrap.style.display = isAdhkarView ? 'flex' : 'none';
+    statsContainer.style.display = currentView === 'stats' ? 'flex' : 'none';
+    settingsContainer.style.display = currentView === 'settings' ? 'block' : 'none';
+    progressSection.style.display = isAdhkarView ? 'block' : 'none';
+    streakWrap.style.display = isAdhkarView && streak.count >= 2 ? 'flex' : 'none';
+    doneBanner.style.display = isAdhkarView ? 'block' : 'none';
+    hintText.style.display = isAdhkarView ? 'block' : 'none';
+    btnAdd.style.display = isAdhkarView ? 'flex' : 'none';
+    
+    if (currentView === 'stats') {
+      renderStats();
+      return;
+    }
+    
+    if (currentView === 'settings') {
+      renderSettings();
+      return;
+    }
+    
+    // overall progress
+    const { pct, done, total } = calcOverall();
+    overallFill.style.width = pct + '%';
+    overallPct.textContent  = pct + '%';
+    overallCount.textContent = done + ' / ' + total + ' تكرار';
+
+    // done banner
+    if (allDone()) {
+      doneBanner.innerHTML = '✅ أحسنت! اكتملت جميع أذكار ' + (tab==='morning'?'الصباح':'المساء');
+      doneBanner.className = 'done-banner';
+      // streak
+      const todayStr = new Date().toISOString().slice(0,10);
+      if (streak.lastDate !== todayStr) {
+        const yesterday = new Date(Date.now()-86400000).toISOString().slice(0,10);
+        streak.count = (streak.lastDate === yesterday) ? streak.count + 1 : 1;
+        streak.lastDate = todayStr;
+        try { localStorage.setItem(K.streak, JSON.stringify(streak)); } catch{}
+      }
+      if (streak.count >= 2) {
+        streakWrap.style.display = 'flex';
+        streakCountEl.textContent = streak.count;
+      }
+      recordCompletion();
+    } else {
+      doneBanner.style.display = 'none';
+    }
+
+    // edit mode
+    shell.classList.toggle('edit-mode', editMode);
+    btnEdit.classList.toggle('active', editMode);
+
+    // update buttons
+    updateVibrateButton();
+    updateSoundButton();
+
+    // cards
+    const list = curList();
+    if (!list.length) {
+      listWrap.innerHTML = `<div class="empty-state"><div class="empty-icon">🌿</div>لا توجد أذكار.<br>اضغط <strong>إضافة ذكر</strong> للبدء</div>`;
+      return;
+    }
+
+    const { done: doneList, pending: pendingList } = sortedList();
+    let html = '';
+
+    if (doneList.length && pendingList.length) {
+      html += doneList.map(d => cardHTML(d)).join('');
+      html += `<div class="section-divider">المتبقية</div>`;
+      html += pendingList.map(d => cardHTML(d)).join('');
+    } else {
+      html += list.map(d => cardHTML(d)).join('');
+    }
+
+    listWrap.innerHTML = html;
+  }
+
+  // ─── SWIPE HANDLING ───
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let currentCard = null;
+  
+  listWrap.addEventListener('touchstart', function(e) {
+    if (editMode || currentView !== 'adhkar') return;
+    const card = e.target.closest('.dhikr-card');
+    if (!card || card.classList.contains('done')) return;
+    
+    currentCard = card;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    card.classList.add('swiping');
+  });
+  
+  listWrap.addEventListener('touchmove', function(e) {
+    if (!currentCard) return;
+    
+    const deltaX = e.touches[0].clientX - touchStartX;
+    const deltaY = e.touches[0].clientY - touchStartY;
+    
+    // Only handle horizontal swipes
+    if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 10) {
+      e.preventDefault();
+      currentCard.style.transform = `translateX(${deltaX * 0.3}px)`;
+      
+      if (deltaX < -50) {
+        // Swipe left - show reset action
+        currentCard.style.opacity = '0.7';
+      } else if (deltaX > 50) {
+        // Swipe right - show complete action
+        currentCard.style.opacity = '0.7';
+      } else {
+        currentCard.style.opacity = '1';
+      }
+    }
+  });
+  
+  listWrap.addEventListener('touchend', function(e) {
+    if (!currentCard) return;
+    
+    const deltaX = (e.changedTouches[0]?.clientX || touchStartX) - touchStartX;
+    
+    currentCard.classList.remove('swiping');
+    currentCard.style.transform = '';
+    currentCard.style.opacity = '';
+    
+    if (Math.abs(deltaX) > 100) {
+      const id = currentCard.dataset.id;
+      if (deltaX < -100) {
+        // Swipe left - reset
+        curProg()[id] = 0;
+        save();
+        render();
+      } else if (deltaX > 100) {
+        // Swipe right - complete
+        const dhikr = curList().find(d => d.id === id);
+        if (dhikr) {
+          curProg()[id] = dhikr.repeat;
+          save();
+          playCompleteSound();
+          render();
+        }
+      }
+    }
+    
+    currentCard = null;
+  });
+
+  // ─── EVENT DELEGATION ───
+  listWrap.addEventListener('click', function(e) {
+    if (currentView !== 'adhkar') return;
+
+    // reset button
+    const resetId = e.target.closest('[data-reset]')?.dataset.reset;
+    if (resetId) {
+      e.stopPropagation();
+      curProg()[resetId] = 0;
+      save(); render();
+      return;
+    }
+
+    // edit overlay
+    const editId_ = e.target.closest('[data-edit]')?.dataset.edit;
+    if (editId_ && editMode) { openModal(editId_); return; }
+
+    // card tap → increment
+    const card = e.target.closest('.dhikr-card');
+    if (!card || editMode) return;
+    const id    = card.dataset.id;
+    const dhikr = curList().find(d => d.id === id);
+    if (!dhikr) return;
+
+    const cnt = getCount(id);
+    if (cnt >= dhikr.repeat) return;
+
+    const newCnt        = cnt + 1;
+    const justFinished  = newCnt >= dhikr.repeat;
+    curProg()[id]       = newCnt;
+    save();
+
+    // ripple
+    const rect = card.getBoundingClientRect();
+    const r = document.createElement('div');
+    r.className = 'ripple';
+    r.style.left = (e.clientX - rect.left) + 'px';
+    r.style.top  = (e.clientY - rect.top)  + 'px';
+    card.appendChild(r);
+    setTimeout(() => r.remove(), 520);
+
+    // haptic
+    vibrate(justFinished ? [30,25,60] : 14);
+    
+    // sound
+    if (justFinished) {
+      playCompleteSound();
+    } else {
+      playClickSound();
+    }
+
+    if (justFinished) {
+      render();
+      setTimeout(() => {
+        const { pending } = sortedList();
+        if (pending.length) {
+          const nextCard = listWrap.querySelector('[data-id="' + pending[0].id + '"]');
+          if (nextCard) {
+            nextCard.scrollIntoView({ behavior:'smooth', block:'center' });
+            nextCard.classList.add('just-activated');
+            setTimeout(() => nextCard.classList.remove('just-activated'), 800);
+          }
+        }
+      }, 100);
+    } else {
+      const pct = Math.min(100, newCnt / dhikr.repeat * 100);
+      const bubble = card.querySelector('.count-bubble');
+      const fill   = card.querySelector('.progress-bar-fill');
+      if (bubble) bubble.textContent = newCnt + '/' + dhikr.repeat;
+      if (fill)   fill.style.width   = pct + '%';
+      const { pct: oPct, done: oDone, total: oTotal } = calcOverall();
+      overallFill.style.width = oPct + '%';
+      overallPct.textContent  = oPct + '%';
+      overallCount.textContent = oDone + ' / ' + oTotal + ' تكرار';
+    }
+  });
+
+  // ─── NAVIGATION TABS ───
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+      currentView = this.dataset.view;
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      this.classList.add('active');
+      render();
+      
+      if (currentView === 'settings') {
+        setTimeout(renderSettings, 100);
+      }
+    });
+  });
+
+  // ─── MAIN TABS ───
+  document.getElementById('tabMorning').addEventListener('click', () => {
+    tab = 'morning';
+    document.getElementById('tabMorning').classList.add('active');
+    document.getElementById('tabEvening').classList.remove('active');
+    editMode = false;
+    currentView = 'adhkar';
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('[data-view="adhkar"]').classList.add('active');
+    render();
+  });
+  
+  document.getElementById('tabEvening').addEventListener('click', () => {
+    tab = 'evening';
+    document.getElementById('tabEvening').classList.add('active');
+    document.getElementById('tabMorning').classList.remove('active');
+    editMode = false;
+    currentView = 'adhkar';
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector('[data-view="adhkar"]').classList.add('active');
+    render();
+  });
+
+  // ─── EDIT MODE ───
+  btnEdit.addEventListener('click', () => { editMode = !editMode; render(); });
+
+  // ─── RESET ALL ───
+  document.getElementById('btnReset').addEventListener('click', () => {
+    if (!confirm('تصفير جميع التكرارات للأذكار الحالية؟')) return;
+    const map = curProg();
+    Object.keys(map).forEach(k => map[k] = 0);
+    save(); render();
+  });
+
+  // ─── DARK MODE ───
+  document.getElementById('btnDark').addEventListener('click', () => {
+    darkMode = !darkMode;
+    document.documentElement.toggleAttribute('data-dark', darkMode);
+    document.getElementById('btnDark').textContent = darkMode ? '☀️' : '🌙';
+    save();
+  });
+
+  // ─── SOUND TOGGLE ───
+  btnSound.addEventListener('click', () => {
+    soundOn = !soundOn;
+    updateSoundButton();
+    save();
+    if (soundOn) {
+      initAudio();
+      playClickSound();
+    }
+  });
+
+  // ─── VIBRATE TOGGLE ───
+  btnVibrate.addEventListener('click', () => {
+    vibrateOn = !vibrateOn;
+    updateVibrateButton();
+    save();
+    if (vibrateOn) vibrate(30);
+  });
+
+  // ─── MODAL ───
+  const modalEl   = document.getElementById('modal');
+  const modalTitle= document.getElementById('modalTitle');
+  const arabicInp = document.getElementById('arabicInput');
+  const repeatInp = document.getElementById('repeatInput');
+  const deleteWrap= document.getElementById('deleteWrap');
+
+  function openModal(id) {
+    editId = id || null;
+    if (editId) {
+      const d = curList().find(x => x.id === editId);
+      if (!d) return;
+      modalTitle.textContent = 'تعديل الذكر';
+      arabicInp.value = d.arabic;
+      repeatInp.value = d.repeat;
+      deleteWrap.style.display = 'flex';
+    } else {
+      modalTitle.textContent = 'إضافة ذكر جديد';
+      arabicInp.value = '';
+      repeatInp.value = 1;
+      deleteWrap.style.display = 'none';
+    }
+    modalEl.classList.add('open');
+    setTimeout(() => arabicInp.focus(), 300);
+  }
+
+  function closeModal() { modalEl.classList.remove('open'); editId = null; }
+
+  btnAdd.addEventListener('click', () => openModal(null));
+  document.getElementById('btnCancel').addEventListener('click', closeModal);
+  modalEl.addEventListener('click', e => { if (e.target === modalEl) closeModal(); });
+
+  document.getElementById('btnSave').addEventListener('click', () => {
+    const text = arabicInp.value.trim();
+    const rep  = parseInt(repeatInp.value, 10);
+    if (!text || isNaN(rep) || rep < 1) {
+      arabicInp.style.borderColor = '#dc2626';
+      setTimeout(() => arabicInp.style.borderColor = '', 1000);
+      return;
+    }
+    const list    = curList();
+    const progMap = curProg();
+    if (editId) {
+      const idx = list.findIndex(d => d.id === editId);
+      if (idx !== -1) {
+        list[idx].arabic = text;
+        list[idx].repeat = rep;
+        if ((progMap[editId]||0) > rep) progMap[editId] = rep;
+      }
+    } else {
+      const newId = 'd' + Date.now() + Math.random().toString(36).slice(2,5);
+      list.push({ id:newId, arabic:text, repeat:rep });
+      progMap[newId] = 0;
+    }
+    save(); closeModal(); render();
+  });
+
+  document.getElementById('btnDelete').addEventListener('click', () => {
+    if (!editId || !confirm('حذف هذا الذكر نهائياً؟')) return;
+    const list = curList();
+    const idx  = list.findIndex(d => d.id === editId);
+    if (idx !== -1) { list.splice(idx, 1); delete curProg()[editId]; }
+    save(); closeModal(); render();
+  });
+
+  // ─── INIT ───
+  load();
+  if (darkMode) {
+    document.documentElement.setAttribute('data-dark','');
+    document.getElementById('btnDark').textContent = '☀️';
+  }
+  
+  // Initialize audio on first user interaction
+  document.addEventListener('click', function initAudioOnce() {
+    initAudio();
+    document.removeEventListener('click', initAudioOnce);
+  }, { once: true });
+  
+  // Check for auto-reset on load
+  checkAutoReset();
+  
+  // Simulate initial cloud sync if enabled
+  if (settings.cloudSync) {
+    setTimeout(simulateCloudSync, 2000);
+  }
+  
+  updateSoundButton();
+  updateVibrateButton();
+  render();
+})();
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg))
+      .catch(err => console.log('SW error:', err));
+  });
+}
+</script>
+</body>
+</html>
