@@ -2,44 +2,14 @@
   "name": "أذكاري - أذكار الصباح والمساء",
   "short_name": "أذكاري",
   "description": "تطبيق أذكار الصباح والمساء مع تتبع التقدم والإحصائيات",
-  "start_url": "/",
+  "start_url": "/Adhkar/",
   "display": "standalone",
   "theme_color": "#c8962a",
   "background_color": "#f5efe4",
   "orientation": "portrait",
-  "scope": "/",
+  "scope": "/Adhkar/",
   "lang": "ar",
   "dir": "rtl",
   "categories": ["lifestyle", "religion", "productivity"],
-  "icons": [
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
-  ],
-  "shortcuts": [
-    {
-      "name": "أذكار الصباح",
-      "short_name": "الصباح",
-      "description": "أذكار الصباح اليومية",
-      "url": "/?tab=morning"
-    },
-    {
-      "name": "أذكار المساء",
-      "short_name": "المساء",
-      "description": "أذكار المساء اليومية",
-      "url": "/?tab=evening"
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "screenshot-1.png",
-      "sizes": "1080x1920",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "شاشة الأذكار الرئيسية"
-    }
-  ]
+  "icons": []
 }
