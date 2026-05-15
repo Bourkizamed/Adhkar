@@ -1,5 +1,5 @@
 const CACHE_NAME = 'adhkar-v1';
-const SHELL = ['/index.html', '/'];
+const SHELL = ['/Adhkar/index.html', '/'];
 
 self.addEventListener('install', e => {
   e.waitUntil(
