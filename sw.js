@@ -1,12 +1,11 @@
 // sw.js - Service Worker for أذكاري
 const CACHE_NAME = 'adhkar-v1';
-const OFFLINE_URL = '/';
 
 // Files to cache for offline use
 const FILES_TO_CACHE = [
-  '/',
-  '/adhkar.html',
-  '/manifest.json'
+  '/Adhkar/',
+  '/Adhkar/index.html',
+  '/Adhkar/manifest.json'
 ];
 
 // Install event - cache core files
@@ -54,48 +53,10 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
       .then((cachedResponse) => {
-        // Return cached response if found
         if (cachedResponse) {
           return cachedResponse;
         }
-
-        // Otherwise fetch from network
-        return fetch(event.request)
-          .then((response) => {
-            // Don't cache if not a valid response
-            if (!response || response.status !== 200 || response.type !== 'basic') {
-              return response;
-            }
-
-            // Clone response for caching
-            const responseToCache = response.clone();
-            caches.open(CACHE_NAME)
-              .then((cache) => {
-                cache.put(event.request, responseToCache);
-              });
-
-            return response;
-          })
-          .catch(() => {
-            // If offline and fetch fails, return offline page
-            if (event.request.mode === 'navigate') {
-              return caches.match(OFFLINE_URL);
-            }
-            return new Response('Offline - Content not available');
-          });
+        return fetch(event.request);
       })
   );
 });
-
-// Background sync for offline completions (optional)
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'adhkar-sync') {
-    console.log('[SW] Syncing offline data...');
-    event.waitUntil(syncOfflineData());
-  }
-});
-
-async function syncOfflineData() {
-  // You can implement this later to sync counts when back online
-  console.log('[SW] Syncing complete');
-}
