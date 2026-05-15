@@ -24,7 +24,6 @@ self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   if (!url.protocol.startsWith('http')) return;
 
-  // Navigation requests: network first, fall back to cached shell for offline
   if (e.request.mode === 'navigate') {
     e.respondWith(
       fetch(e.request)
@@ -33,12 +32,11 @@ self.addEventListener('fetch', e => {
           caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
           return response;
         })
-        .catch(() => caches.match('/index.html'))
+        .catch(() => caches.match('/Adhkar/index.html'))
     );
     return;
   }
 
-  // Assets: cache first, fetch and cache on miss
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
